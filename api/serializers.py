@@ -10,3 +10,7 @@ class PostSerializer(serializers.ModelSerializer):
         model = Post
         exclude = ("id",)
 
+    def create(self, validated_data):
+        return Post.objects.create(**validated_data)
+
+

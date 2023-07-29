@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.html import format_html
+from django.utils.text import slugify
 
 from persiantools.jdatetime import JalaliDate
 
@@ -25,7 +26,8 @@ class Category(models.Model):
 class Post(models.Model):
     title = models.CharField("عنوان", max_length=50)
     slug = models.SlugField(unique=True, allow_unicode=True,
-                            verbose_name="اسلاگ")
+                            verbose_name="اسلاگ",
+                            blank=True, null=True)
     category = models.ForeignKey(Category, verbose_name="دسته بندی",
                                  on_delete=models.SET_NULL,
                                  related_name="posts",
@@ -41,6 +43,10 @@ class Post(models.Model):
     class Meta:
         verbose_name = "مقاله"
         verbose_name_plural = "مقالات"
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.title, allow_unicode=True)
+        super().save()
 
     def __str__(self):
         return self.title
